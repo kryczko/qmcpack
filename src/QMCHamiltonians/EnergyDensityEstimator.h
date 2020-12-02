@@ -106,13 +106,13 @@ private:
   // static potential
   CombinedTraceSample<TraceReal>* Vs_trace;
   // elec-elec potential
-  CombinedTraceSample<TraceReal>* Vee_trace;
+  TraceSample<TraceReal>* Vee_trace;
   // localECP potential
-  CombinedTraceSample<TraceReal>* Vlecp_trace;
+  TraceSample<TraceReal>* Vlecp_trace;
   // nonlocalECP potential
-  CombinedTraceSample<TraceReal>* Vnlecp_trace;
+  TraceSample<TraceReal>* Vnlecp_trace;
   // ion-ion potential
-  CombinedTraceSample<TraceReal>* Vii_trace;
+  TraceSample<TraceReal>* Vii_trace;
 
   virtual void get_required_traces(TraceManager& tm);
 
