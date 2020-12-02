@@ -216,10 +216,10 @@ void EnergyDensityEstimator::get_required_traces(TraceManager& tm)
   Vee_trace  = tm.get_real_trace(*Pdynamic, "ElecElec");
   Vlecp_trace = tm.get_real_trace(*Pdynamic, "LocalECP");
   Vnlecp_trace = tm.get_real_trace(*Pdynamic, "NonLocalECP");
-  Vii_trace = tm.get_real_trace(*Pdynamic, "IonIon");
 
   if (Pstatic)
     Vs_trace = tm.get_real_combined_trace(*Pstatic, "LocalPotential");
+    Vii_trace = tm.get_real_trace(*Pstatic, "IonIon");
   have_required_traces = true;
 }
 
@@ -302,7 +302,7 @@ EnergyDensityEstimator::Return_t EnergyDensityEstimator::evaluate(ParticleSet& P
       const std::vector<TraceReal>& Vees = Vee_trace->sample;
       const std::vector<TraceReal>& Vlecps = Vlecp_trace->sample;
       const std::vector<TraceReal>& Vnlecps = Vnlecp_trace->sample;
-      const std::vector<TraceReal>& Viis = Vii_trace->sample;
+      
       for (int i = 0; i < Ps.getTotalNum(); i++)
       {
         EDValues(p, W) = w;
@@ -312,7 +312,6 @@ EnergyDensityEstimator::Return_t EnergyDensityEstimator::evaluate(ParticleSet& P
         EDValues(p, Vee) = w * Vees[i];
         EDValues(p, Vlecp) = w * Vlecps[i];
         EDValues(p, Vnlecp) = w * Vnlecps[i];
-        EDValues(p, Vii) = w * Viis[i];
         p++;
       }
     }
@@ -321,12 +320,15 @@ EnergyDensityEstimator::Return_t EnergyDensityEstimator::evaluate(ParticleSet& P
       Vs_trace->combine();
       const ParticleSet& Ps            = *Pstatic;
       const std::vector<TraceReal>& Vs = Vs_trace->sample;
+      const std::vector<TraceReal>& Viis = Vii_trace->sample;
+
       if (!ion_points)
         for (int i = 0; i < Ps.getTotalNum(); i++)
         {
           EDValues(p, W) = w;
           EDValues(p, T) = 0.0;
           EDValues(p, V) = w * Vs[i];
+          EDValues(p, Vii) = w * Viis[i];
           p++;
         }
       else
