@@ -213,10 +213,10 @@ void EnergyDensityEstimator::get_required_traces(TraceManager& tm)
   w_trace    = tm.get_real_trace("weight");
   Td_trace   = tm.get_real_trace(*Pdynamic, "Kinetic");
   Vd_trace   = tm.get_real_combined_trace(*Pdynamic, "LocalPotential");
-  Vee_trace  = tm.get_real_combined_trace(*Pdynamic, "ElecElec");
-  Vlecp_trace = tm.get_real_combined_trace(*Pdynamic, "LocalECP");
-  Vnlecp_trace = tm.get_real_combined_trace(*Pdynamic, "NonLocalECP");
-  Vii_trace = tm.get_real_combined_trace(*Pdynamic, "IonIon");
+  Vee_trace  = tm.get_real_trace(*Pdynamic, "ElecElec");
+  Vlecp_trace = tm.get_real_trace(*Pdynamic, "LocalECP");
+  Vnlecp_trace = tm.get_real_trace(*Pdynamic, "NonLocalECP");
+  Vii_trace = tm.get_real_trace(*Pdynamic, "IonIon");
 
   if (Pstatic)
     Vs_trace = tm.get_real_combined_trace(*Pstatic, "LocalPotential");
