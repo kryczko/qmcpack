@@ -72,6 +72,10 @@ private:
     W = 0,
     T,
     V,
+    Vee,
+    Vlecp,
+    Vnlecp,
+    Vii,
     nEDValues
   };
   Matrix<RealType> EDValues;
@@ -97,8 +101,18 @@ private:
 
   TraceSample<TraceReal>* w_trace;
   TraceSample<TraceReal>* Td_trace;
+  // dynamic potential
   CombinedTraceSample<TraceReal>* Vd_trace;
+  // static potential
   CombinedTraceSample<TraceReal>* Vs_trace;
+  // elec-elec potential
+  CombinedTraceSample<TraceReal>* Vee_trace;
+  // localECP potential
+  CombinedTraceSample<TraceReal>* Vlecp_trace;
+  // nonlocalECP potential
+  CombinedTraceSample<TraceReal>* Vnlecp_trace;
+  // ion-ion potential
+  CombinedTraceSample<TraceReal>* Vii_trace;
 
   virtual void get_required_traces(TraceManager& tm);
 

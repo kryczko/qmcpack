@@ -24,7 +24,7 @@
 namespace qmcplusplus
 {
 EnergyDensityEstimator::EnergyDensityEstimator(PSPool& PSP, const std::string& defaultKE)
-    : psetpool(PSP), Pdynamic(0), Pstatic(0), w_trace(0), Td_trace(0), Vd_trace(0), Vs_trace(0)
+    : psetpool(PSP), Pdynamic(0), Pstatic(0), w_trace(0), Td_trace(0), Vd_trace(0), Vs_trace(0),Vee_trace(0), Vlecp_trace(0), Vnlecp_trace(0), Vii_trace(0)
 {
   UpdateMode.set(COLLECTABLE, 1);
   defKE      = defaultKE;
@@ -34,6 +34,10 @@ EnergyDensityEstimator::EnergyDensityEstimator(PSPool& PSP, const std::string& d
   request.request_scalar("weight");
   request.request_array("Kinetic");
   request.request_array("LocalPotential");
+  request.request_array("ElecElec");
+  request.request_array("LocalECP");
+  request.request_array("NonLocalECP");
+  request.request_array("IonIon");
 }
 
 
@@ -209,6 +213,11 @@ void EnergyDensityEstimator::get_required_traces(TraceManager& tm)
   w_trace    = tm.get_real_trace("weight");
   Td_trace   = tm.get_real_trace(*Pdynamic, "Kinetic");
   Vd_trace   = tm.get_real_combined_trace(*Pdynamic, "LocalPotential");
+  Vee_trace  = tm.get_real_combined_trace(*Pdynamic, "ElecElec");
+  Vlecp_trace = tm.get_real_combined_trace(*Pdynamic, "LocalECP");
+  Vnlecp_trace = tm.get_real_combined_trace(*Pdynamic, "NonLocalECP");
+  Vii_trace = tm.get_real_combined_trace(*Pdynamic, "IonIon");
+
   if (Pstatic)
     Vs_trace = tm.get_real_combined_trace(*Pstatic, "LocalPotential");
   have_required_traces = true;
@@ -289,11 +298,21 @@ EnergyDensityEstimator::Return_t EnergyDensityEstimator::evaluate(ParticleSet& P
       const ParticleSet& Ps            = *Pdynamic;
       const std::vector<TraceReal>& Ts = Td_trace->sample;
       const std::vector<TraceReal>& Vs = Vd_trace->sample;
+      
+      const std::vector<TraceReal>& Vees = Vee_trace->sample;
+      const std::vector<TraceReal>& Vlecps = Vlecp_trace->sample;
+      const std::vector<TraceReal>& Vnlecps = Vnlecp_trace->sample;
+      const std::vector<TraceReal>& Viis = Vii_trace->sample;
       for (int i = 0; i < Ps.getTotalNum(); i++)
       {
         EDValues(p, W) = w;
         EDValues(p, T) = w * Ts[i];
         EDValues(p, V) = w * Vs[i];
+
+        EDValues(p, Vee) = w * Vees[i];
+        EDValues(p, Vlecp) = w * Vlecps[i];
+        EDValues(p, Vnlecp) = w * Vnlecps[i];
+        EDValues(p, Vii) = w * Viis[i];
         p++;
       }
     }
